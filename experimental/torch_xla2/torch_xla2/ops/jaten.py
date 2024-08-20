@@ -3726,3 +3726,10 @@ def _get_median_index(x, axis=None, keepdims=False):
 @op(torch.ops.aten.triangular_solve)
 def _aten_triangular_solve(b, a, upper=True, transpose=False, unittriangular=False):
   return (jax.lax.linalg.triangular_solve(a, b, left_side=True, lower=not upper, transpose_a=transpose, unit_diagonal=unittriangular), a)
+
+
+# torch.linalg.qr
+@op(torch.ops.aten.linalg_qr)
+def _aten_linalg_qr(input, *args, **kwargs):
+  mode = kwargs.get("mode", "reduced")
+  return jax.numpy.linalg.qr(input, mode=mode)
