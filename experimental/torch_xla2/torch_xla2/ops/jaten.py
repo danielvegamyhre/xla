@@ -3095,11 +3095,18 @@ def _aten_conj_physical(self):
 def _aten_log_sigmoid(x):
   return jax.nn.log_sigmoid(x)
 
-@op(torch.ops.aten.linalg_qr)
-def _aten_linalg_qr(input, *args, **kwargs):
-  jax_mode = "reduced"
+# torch.qr
+@op(torch.ops.aten.qr)
+def _aten_qr(input, *args, **kwargs):
+  mode = "reduced"
   # torch bool param 'simple=True' corresponds to jax 'reduced' mode,
   # and simple=False corresponds to jax 'complete' mode.
   if kwargs.get("simple") is False:
-    jax_mode = "complete"
-  return jax.numpy.linalg.qr(input, mode=jax_mode)
+    mode = "complete"
+  return jax.numpy.linalg.qr(input, mode=mode)
+
+# torch.linalg.qr
+@op(torch.ops.aten.linalg_qr)
+def _aten_linalg_qr(input, *args, **kwargs):
+  mode = kwargs.get("mode", "reduced")
+  return jax.numpy.linalg.qr(input, mode=mode)
