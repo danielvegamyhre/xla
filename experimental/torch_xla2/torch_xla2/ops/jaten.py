@@ -3685,9 +3685,8 @@ def _aten_qr(input, *args, **kwargs):
   # and simple=False corresponds to jax 'complete' mode.
   if kwargs.get("simple") is False:
     jax_mode = "complete"
-  return jax.numpy.linalg.qr(input, mode=jax_mode)
+  return jax.numpy.linalg.qr(input, mode=jax_mode)  
 
-# torch.linalg.qr
 @op(torch.ops.aten.linalg_qr)
 def _aten_linalg_qr(input, *args, **kwargs):
   mode = kwargs.get("mode", "reduced")
