@@ -427,11 +427,16 @@ def _aten_dot(x, y):
 
 @op(torch.ops.aten._to_copy)
 def _aten__to_copy(self, **kwargs):
+  import pdb; pdb.set_trace()
   dtype = mappings.t2j_dtype(kwargs["dtype"])
   if dtype != self.dtype:
     return self.astype(dtype)
   return jnp.copy(self)
 
+@op(torch.ops.aten.masked_fill)
+@op(torch.ops.aten.masked_fill_)
+def _aten_masked_fill(self, mask, value):
+  return jnp.where(mask, value, self)
 
 @op(torch.ops.aten.empty)
 @op_base.convert_dtype()
@@ -1215,6 +1220,12 @@ def _aten_tanh(self):
 # aten.ceil
 @op(torch.ops.aten.ceil)
 def _aten_ceil(self):
+  return jnp.ceil(self)
+
+
+# aten.ceil_
+@op(torch.ops.aten.ceil_)
+def _aten_ceil_(self):
   return jnp.ceil(self)
 
 
@@ -3677,6 +3688,7 @@ def _aten_conj_physical(self):
 def _aten_log_sigmoid(x):
   return jax.nn.log_sigmoid(x)
 
+
 # torch.qr
 @op(torch.ops.aten.qr)
 def _aten_qr(input, *args, **kwargs):
@@ -3733,3 +3745,12 @@ def _aten_triangular_solve(b, a, upper=True, transpose=False, unittriangular=Fal
 def _aten_linalg_qr(input, *args, **kwargs):
   mode = kwargs.get("mode", "reduced")
   return jax.numpy.linalg.qr(input, mode=mode)
+
+
+@op(torch.ops.aten.quantile)
+def _aten_quantile(input, q, **kwargs):
+  import pdb; pdb.set_trace()
+  dim = kwargs.get(dim, None)
+  keepdim = kwargs.get("keepdim", False)
+  method = kwargs.get("interpolation") # torch param 'interpolation' maps to jax param 'method'
+  return jax.numpy.quantile(input, q, dim=dim, keepdim=keepdim, method=method)

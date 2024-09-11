@@ -217,7 +217,7 @@ skiplist = {
     "polygamma",
     "prod",
     "put",
-    "quantile",
+#    "quantile",
     "renorm",
     "repeat_interleave",
     "resize_",
